@@ -16,7 +16,7 @@ A package to track historical prices of purchasable items in [LunarPHP](https://
    
 2. Publish the migrations and configurations:
     ```bash
-    php artisan vendor:publish --provider="Kkosmider\Omnibus\OmnibusServiceProvider"
+    php artisan vendor:publish --tag=omnibus.migrations
     ```
 3. Add the `HasHistoricalPrices` trait to your purchasable models.
 
@@ -27,7 +27,7 @@ Use the HasHistoricalPrices trait in your purchasable models:
 ```php
 use Kkosmider\Omnibus\Traits\HasHistoricalPrices;
 
-class Product extends Model
+class ProductVariant extends \Lunar\Models\ProductVariant
 {
     use HasHistoricalPrices;
 }
@@ -37,15 +37,14 @@ class Product extends Model
 Retrieve the lowest price within the last 30 days:
 
 ```php
-$product = Product::find(1);
+$variant = ProductVariant::find(1);
 
-$historicalPrice = $product->getHistoricalPrice(
-    currencyId: 1,
-    customerGroupId: 2,
-    tier: 1,
-    days: 30
-);
+$lowestPrice = $variant->getHistoricalLowestPrice();
+$variantHistoricalPrices = $variant->historicalPrices()->get();
 ```
 
 ## Configuration
-Customize configurations in `config/omnibus.php` after publishing.
+Customize configurations in `config/omnibus.php` after publishing:
+```bash
+php artisan vendor:publish --tag=omnibus.migrations
+```
