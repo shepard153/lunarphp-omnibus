@@ -46,5 +46,5 @@ $variantHistoricalPrices = $variant->historicalPrices()->get();
 ## Configuration
 Customize configurations in `config/omnibus.php` after publishing:
 ```bash
-php artisan vendor:publish --tag=omnibus.migrations
+php artisan vendor:publish --tag=omnibus.config
 ```
