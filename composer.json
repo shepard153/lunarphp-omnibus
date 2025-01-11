@@ -1,0 +1,21 @@
+{
+  "name": "kkosmider/lunarphp-omnibus",
+  "description": "A LunarPHP package for tracking historical prices and Omnibus directive compliance.",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Kkosmider\\LunarphpOmnibus\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "kkosmider",
+      "email": "kamil.kosmider1@gmail.com"
+    }
+  ],
+  "minimum-stability": "beta",
+  "require": {
+    "lunarphp/lunar": "1.0.0-beta.6"
+  }
+}
