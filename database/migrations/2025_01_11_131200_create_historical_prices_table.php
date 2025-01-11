@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->string('priceable_type')->index();
             $table->unsignedBigInteger('currency_id');
             $table->unsignedBigInteger('customer_group_id')->nullable();
-            $table->integer('tier')->default(1);
             $table->unsignedBigInteger('price');
             $table->timestamp('recorded_at');
             $table->timestamps();

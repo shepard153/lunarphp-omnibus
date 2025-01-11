@@ -3,14 +3,15 @@ declare(strict_types=1);
 
 namespace Kkosmider\Omnibus\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Lunar\Base\BaseModel;
+use Lunar\Base\Casts\Price as CastsPrice;
 use Lunar\Base\Traits\HasModelExtending;
 use Lunar\Models\Currency;
 use Lunar\Models\CustomerGroup;
 
-class HistoricalPrice extends Model
+class HistoricalPrice extends BaseModel
 {
     use HasModelExtending;
 
@@ -19,10 +20,20 @@ class HistoricalPrice extends Model
         'priceable_type',
         'currency_id',
         'customer_group_id',
-        'tier',
         'price',
         'recorded_at',
     ];
+
+    protected $casts = [
+        'price' => CastsPrice::class,
+    ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->setTable('historical_prices');
+    }
 
     public function priceable(): MorphTo
     {

@@ -5,7 +5,7 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Kkosmider\\LunarphpOmnibus\\": "src/"
+      "Kkosmider\\Omnibus\\": "src/"
     }
   },
   "authors": [
@@ -17,5 +17,12 @@
   "minimum-stability": "beta",
   "require": {
     "lunarphp/lunar": "1.0.0-beta.6"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Kkosmider\\Omnibus\\OmnibusServiceProvider"
+      ]
+    }
   }
 }
