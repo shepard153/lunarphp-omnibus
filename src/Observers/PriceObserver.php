@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Kkosmider\Omnibus\Observers;
 
+use Illuminate\Support\Facades\Log;
 use Kkosmider\Omnibus\Enums\TrackingMode;
 use Kkosmider\Omnibus\Models\HistoricalPrice;
 use Lunar\Models\Price;
@@ -21,42 +22,51 @@ class PriceObserver
             $trackingMode = TrackingMode::ALL;
         }
 
-        if ($price->wasChanged('price')) {
-            if ($trackingMode === TrackingMode::ALL) {
-                HistoricalPrice::query()->create([
-                    'priceable_id'      => $price->priceable_id,
-                    'priceable_type'    => $price->priceable_type,
-                    'currency_id'       => $price->currency_id,
-                    'customer_group_id' => $price->customer_group_id,
-                    'price'             => $price->price->value,
-                    'recorded_at'       => now(),
-                ]);
-            }
-
-            if ($trackingMode === TrackingMode::LATEST) {
-                $existingLowest = HistoricalPrice::query()
-                    ->where([
+        try {
+            if ($price->wasChanged('price')) {
+                if ($trackingMode === TrackingMode::ALL) {
+                    HistoricalPrice::query()->create([
                         'priceable_id'      => $price->priceable_id,
                         'priceable_type'    => $price->priceable_type,
                         'currency_id'       => $price->currency_id,
                         'customer_group_id' => $price->customer_group_id,
-                    ])
-                    ->orderBy('price')
-                    ->value('price')
-                    ?->value;
-
-                if (is_null($existingLowest) || $price->price->value < $existingLowest) {
-                    HistoricalPrice::query()->latest('recorded_at')->updateOrCreate([
-                        'priceable_id'      => $price->priceable_id,
-                        'priceable_type'    => $price->priceable_type,
-                        'currency_id'       => $price->currency_id,
-                        'customer_group_id' => $price->customer_group_id,
-                    ], [
-                        'price'       => $price->price->value,
-                        'recorded_at' => now(),
+                        'price'             => $price->price->value,
+                        'recorded_at'       => now(),
                     ]);
                 }
+
+                if ($trackingMode === TrackingMode::LATEST) {
+                    $this->updateLatestLowestPrice($price);
+                }
             }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
+    }
+
+    private function updateLatestLowestPrice(Price $price): void
+    {
+        $existingLowest = HistoricalPrice::query()
+            ->where([
+                'priceable_id'      => $price->priceable_id,
+                'priceable_type'    => $price->priceable_type,
+                'currency_id'       => $price->currency_id,
+                'customer_group_id' => $price->customer_group_id,
+            ])
+            ->orderBy('price')
+            ->value('price')
+            ?->value;
+
+        if (is_null($existingLowest) || $price->price->value < $existingLowest) {
+            HistoricalPrice::query()->latest('recorded_at')->updateOrCreate([
+                'priceable_id'      => $price->priceable_id,
+                'priceable_type'    => $price->priceable_type,
+                'currency_id'       => $price->currency_id,
+                'customer_group_id' => $price->customer_group_id,
+            ], [
+                'price'       => $price->price->value,
+                'recorded_at' => now(),
+            ]);
         }
     }
 }
