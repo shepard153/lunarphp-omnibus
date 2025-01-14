@@ -15,7 +15,7 @@ trait HasHistoricalPrices
             'priceable'
         );
     }
-    public function getHistoricalLowestPrice(int $days = 30): HistoricalPrice
+    public function getHistoricalLowestPrice(int $days = 30): ?HistoricalPrice
     {
         return HistoricalPrice::query()
             ->where('priceable_id', $this->getKey())
