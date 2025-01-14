@@ -1,7 +1,7 @@
 {
   "name": "kkosmider/lunarphp-omnibus",
   "description": "A LunarPHP package for tracking historical prices and Omnibus directive compliance.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "library",
   "license": "MIT",
   "autoload": {
