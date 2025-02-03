@@ -46,20 +46,22 @@ class HistoricalPriceResource extends Resource
                     ->label(__('Product name'))
                     ->state(fn (HistoricalPrice $record): ?string => $record->priceable()
                         ->first()
-                        ->product()
-                        ->first()
-                        ->translateAttribute('name')
+                        ?->product()
+                        ?->first()
+                        ?->translateAttribute('name') ?? __('Unknown')
                     )
                     ->searchable(
                         query: fn (Builder $query, string $search): Builder =>
-                        $query->whereHas('priceable.product', function (Builder $query) use ($search): Builder {
-                            $locale = App::getLocale();
+                            $query->whereHas(
+                                'priceable.product',
+                                function (Builder $query) use ($search): Builder {
+                                    $locale = App::getLocale();
 
-                            return $query->whereRaw(
-                                "json_unquote(json_extract(attribute_data, ?)) like ?",
-                                ["$.name.value.$locale", "%$search%"]
-                            );
-                        })
+                                    return $query->whereRaw(
+                                        "json_unquote(json_extract(attribute_data, ?)) like ?",
+                                        ["$.name.value.$locale", "%$search%"]
+                                    );
+                            })
                     ),
                 Tables\Columns\TextColumn::make('price')
                     ->label(__('Price recorded'))
